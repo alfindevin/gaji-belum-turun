@@ -1,268 +1,220 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import {
+  CHAOS_EVENTS,
+  DAYS,
+  DIFFICULTIES,
+  EVENTS,
+  clamp,
+  rupiah,
+  shuffle,
+} from "./gameData";
 
-const STARTING_BALANCE = 327500;
-const DAYS = [25, 26, 27, 28, 29, 30];
+const TOTAL_TURNS = DAYS.length * 2;
 
-const EVENTS = [
-  {
-    icon: "☕",
-    title: "Teman ngajak ngopi",
-    text: '"Ngopi bentar yuk. Cuma 35 ribu kok." Kalimat yang terdengar murah sebelum tanggal tua.',
-    choices: [
-      { label: "Gas, hidup cuma sekali", money: -35000, mental: 14, social: 12, coffee: 1, result: "Kopi enak. Saldo menangis pelan." },
-      { label: "Pura-pura ketiduran", mental: -4, social: -9, result: "Saldo aman, reputasi sebagai manusia sibuk naik." },
-    ],
-  },
-  {
-    icon: "🛒",
-    title: "FLASH SALE 90%",
-    text: "Barang yang tidak kamu butuhkan mendadak terasa seperti kebutuhan primer.",
-    choices: [
-      { label: "Checkout. Mumpung diskon!", money: -79000, mental: 8, impulse: 1, result: "Hemat 90% dari harga yang sebenarnya tidak perlu kamu bayar." },
-      { label: "Tutup aplikasi sekarang", mental: -5, result: "Kamu menang melawan algoritma. Untuk sementara." },
-    ],
-  },
-  {
-    icon: "⛽",
-    title: "Bensin tinggal doa",
-    text: "Jarum bensin sudah lebih rendah daripada ekspektasimu terhadap hidup.",
-    choices: [
-      { label: "Isi Rp30.000", money: -30000, mental: 6, result: "Motor selamat. Dompet sedikit lebih ringan." },
-      { label: "Naik motor pakai keyakinan", mental: -14, result: "Kamu menemukan arti sebenarnya dari eco driving." },
-    ],
-  },
-  {
-    icon: "💡",
-    title: "Token listrik kritis",
-    text: "Meteran berbunyi bip bip seperti sedang mengejek kondisi keuanganmu.",
-    choices: [
-      { label: "Beli token Rp50.000", money: -50000, mental: 10, result: "Lampu menyala. Masa depan belum tentu." },
-      { label: "Mode hemat ekstrem", mental: -18, result: "Kipas mati. Kamu belajar meditasi lewat keringat." },
-    ],
-  },
-  {
-    icon: "💍",
-    title: "Teman menikah",
-    text: "Undangan datang. Ternyata cinta orang lain juga berdampak ke rekeningmu.",
-    choices: [
-      { label: "Datang + amplop Rp100.000", money: -100000, social: 22, mental: 6, result: "Pertemanan +22. Saldo terkena damage critical." },
-      { label: "Doakan dari story saja", social: -18, mental: -3, result: "Kamu mengirim emoji ❤️ dengan kekuatan finansial penuh." },
-    ],
-  },
-  {
-    icon: "📦",
-    title: "Paket COD misterius",
-    text: "Kurir datang membawa paket. Kamu samar-samar ingat checkout jam 01:37.",
-    choices: [
-      { label: "Bayar Rp68.000", money: -68000, impulse: 1, mental: 5, result: "Selamat datang, barang yang kemarin terasa penting." },
-      { label: "Tatap kurir dengan rasa bersalah", mental: -12, result: "Paket kembali. Harga diri ikut sedikit terkirim." },
-    ],
-  },
-  {
-    icon: "🍜",
-    title: "Makan malam",
-    text: "Perut lapar. Aplikasi delivery dengan sopan menawarkan makanan Rp47.000.",
-    choices: [
-      { label: "Pesan makanan proper", money: -47000, hunger: 28, mental: 8, result: "Perut bahagia. Rekening mempertanyakan prioritas." },
-      { label: "Indomie lagi", money: -6500, hunger: 16, mental: -4, noodles: 1, result: "Indomie ke sekian. Tubuhmu mulai 12% micin." },
-    ],
-  },
-  {
-    icon: "👩",
-    title: "Ibu chat",
-    text: '"Nak, ada uang lebih?" Pertanyaan sederhana dengan damage emosional besar.',
-    choices: [
-      { label: "Kirim Rp100.000 ❤️", money: -100000, mental: 18, social: 8, result: "Saldo turun. Hati naik." },
-      { label: "Matikan centang biru", mental: -20, social: -7, result: "Kamu aman secara finansial, tidak secara batin." },
-    ],
-  },
-  {
-    icon: "🎂",
-    title: "Teman kantor ulang tahun",
-    text: "Grup kantor mulai: 'Patungan 25 ribu ya teman-teman 🙏'.",
-    choices: [
-      { label: "Ikut patungan", money: -25000, social: 13, result: "Kue bukan kamu yang makan banyak, tapi kamu ikut membayar." },
-      { label: "Mute grup 8 jam", social: -12, mental: 3, result: "Notifikasi hilang. Masalah secara teknis belum." },
-    ],
-  },
-  {
-    icon: "💸",
-    title: "Teman nagih utang",
-    text: '"Bro yang 20 ribu kemarin..." Dia masih ingat. Tentu saja dia ingat.',
-    choices: [
-      { label: "Bayar sekarang", money: -20000, social: 10, mental: 5, result: "Utang lunas. Integritas finansial terselamatkan." },
-      { label: '"Besok ya bro"', social: -8, mental: -9, result: "Besok adalah konsep yang sangat fleksibel." },
-    ],
-  },
-  {
-    icon: "🍔",
-    title: "Gebetan ngajak makan",
-    text: '"Laper nih 🥺" Satu emoji yang berpotensi mengubah APBN pribadi.',
-    choices: [
-      { label: "Ajak makan Rp85.000", money: -85000, social: 24, mental: 15, result: "Chemistry naik. Likuiditas turun." },
-      { label: '"Aku lagi intermittent fasting"', social: -13, mental: -6, result: "Metode diet baru: tidak punya uang." },
-    ],
-  },
-  {
-    icon: "🏦",
-    title: "Biaya admin muncul",
-    text: "Rp6.500. Kecil saat gajian, terasa seperti pajak kerajaan saat tanggal tua.",
-    choices: [
-      { label: "Terima kenyataan", money: -6500, mental: -4, result: "Tidak ada tombol menolak. Realistis sekali." },
-      { label: "Marah ke aplikasi 30 detik", money: -6500, mental: 2, result: "Uang tetap hilang, tapi kamu merasa didengar." },
-    ],
-  },
-  {
-    icon: "🎮",
-    title: "Game favorit lagi diskon",
-    text: "Diskon 70%. Otakmu menghitung ini sebagai investasi kebahagiaan.",
-    choices: [
-      { label: "Beli Rp59.000", money: -59000, mental: 18, impulse: 1, result: "Library bertambah satu. Waktu bermain tetap nol." },
-      { label: "Wishlist sampai kaya", mental: -7, result: "Disiplin finansial +1. Kesedihan +7." },
-    ],
-  },
-  {
-    icon: "🚕",
-    title: "Hujan deras pas pulang",
-    text: "Pilihan hidup mengecil menjadi: basah atau bayar.",
-    choices: [
-      { label: "Pesan ojol Rp42.000", money: -42000, mental: 9, result: "Sampai rumah kering. Saldo ikut mengering." },
-      { label: "Tunggu hujan reda", mental: -11, hunger: -7, result: "Satu jam kemudian kamu hafal semua lagu minimarket." },
-    ],
-  },
-  {
-    icon: "🥤",
-    title: "Promo BUY 1 GET 1",
-    text: "Kamu cuma butuh satu, tetapi kapitalisme punya rencana lain.",
-    choices: [
-      { label: "Ambil dong, untung!", money: -36000, mental: 7, impulse: 1, result: "Kamu menghemat dengan cara mengeluarkan uang." },
-      { label: "Lewati dengan kepala tegak", mental: 2, result: "Marketing team gagal hari ini." },
-    ],
-  },
-  {
-    icon: "📱",
-    title: "Kuota internet habis",
-    text: "Internet mati. Dunia mendadak tahun 2004.",
-    choices: [
-      { label: "Beli paket Rp45.000", money: -45000, mental: 10, result: "Kamu kembali terhubung ke internet dan masalahnya." },
-      { label: "Numpang Wi-Fi tetangga", mental: -8, social: -4, result: "Sinyal satu bar. Martabat setengah bar." },
-    ],
-  },
-  {
-    icon: "🧺",
-    title: "Laundry menumpuk",
-    text: "Baju bersih tersisa satu. Dan itu kaos event 2019.",
-    choices: [
-      { label: "Laundry Rp28.000", money: -28000, mental: 8, result: "Kehidupan terasa sedikit lebih tertata." },
-      { label: "Cuci manual tengah malam", mental: -12, result: "Gratis secara finansial, mahal secara emosional." },
-    ],
-  },
-  {
-    icon: "💳",
-    title: "PayLater menggoda",
-    text: '"Bayar bulan depan aja." Bulan depan kamu membaca kalimat yang sama.',
-    choices: [
-      { label: "Ambil Rp100.000 dulu", money: 100000, debt: 120000, mental: 12, result: "Saldo bernafas. Masa depan menagih bunga." },
-      { label: "Tidak. Kita harus kuat.", mental: -8, result: "Karakter berkembang melalui penderitaan." },
-    ],
-  },
-];
+function initialStats(mode) {
+  return {
+    balance: mode.startingBalance,
+    mental: 82,
+    hunger: 74,
+    social: 65,
+    debt: 0,
+    noodles: 0,
+    impulse: 0,
+    coffee: 0,
+  };
+}
 
-const clamp = (value) => Math.max(0, Math.min(100, value));
-const rupiah = (value) =>
-  new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 0,
-  }).format(value);
+function mergeEffects(...items) {
+  return items.reduce((total, item) => {
+    if (!item) return total;
+    Object.entries(item).forEach(([key, value]) => {
+      total[key] = (total[key] || 0) + value;
+    });
+    return total;
+  }, {});
+}
 
-function shuffle(items) {
-  const copy = [...items];
-  for (let i = copy.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
+function resolveEffects(base, effects) {
+  const next = {
+    ...base,
+    balance: base.balance + (effects.money || 0),
+    mental: clamp(base.mental + (effects.mental || 0)),
+    hunger: clamp(base.hunger + (effects.hunger || 0)),
+    social: clamp(base.social + (effects.social || 0)),
+    debt: Math.max(0, base.debt + (effects.debt || 0)),
+    noodles: base.noodles + (effects.noodles || 0),
+    impulse: base.impulse + (effects.impulse || 0),
+    coffee: base.coffee + (effects.coffee || 0),
+  };
+
+  if (next.balance < 0) {
+    const shortage = Math.abs(next.balance);
+    next.balance = 0;
+    next.debt += Math.ceil(shortage * 1.15);
   }
-  return copy;
+
+  return next;
+}
+
+function riskChance(risk, stats) {
+  if (!risk) return null;
+  const skillValue = stats[risk.skill] ?? 50;
+  return Math.round(clamp(risk.chance + (skillValue - 50) * 0.25));
+}
+
+function getFatal(stats, mode) {
+  if (stats.hunger <= 0) {
+    return {
+      emoji: "🫥",
+      title: "TUMBANG KELAPARAN",
+      text: "Kamu terlalu sering menjadikan tidur sebagai menu makan.",
+    };
+  }
+
+  if (stats.mental <= 0) {
+    return {
+      emoji: "🫠",
+      title: "MENTAL JEBOL",
+      text: "Saldo belum tentu nol, tapi sistem operasimu sudah shutdown.",
+    };
+  }
+
+  if (stats.debt >= mode.debtLimit) {
+    return {
+      emoji: "💳",
+      title: "UTANG MELEDAK",
+      text: "Limit utangmu kalah cepat dari masalah yang datang.",
+    };
+  }
+
+  return null;
 }
 
 function getEnding(stats) {
-  if (stats.debt >= 250000) {
-    return { emoji: "🤡", title: "PAYLATER ENJOYER", text: "Kamu sampai tanggal 1... ditemani tagihan dari masa depan." };
+  if (stats.debt >= 220000) {
+    return {
+      emoji: "🤡",
+      title: "PAYLATER ENJOYER",
+      text: "Sampai tanggal 1, tapi bulan depan sudah menunggu sambil bawa invoice.",
+    };
   }
   if (stats.noodles >= 3) {
-    return { emoji: "🍜", title: "INDOMIE SURVIVOR", text: "Secara teknis kamu bertahan. Secara nutrisi, kita tidak bahas." };
+    return {
+      emoji: "🍜",
+      title: "INDOMIE SURVIVOR",
+      text: "Kamu hidup, dompet hidup, ginjal tidak ikut memberi komentar.",
+    };
   }
   if (stats.impulse >= 3) {
-    return { emoji: "🛍️", title: "FINANCIAL CLOWN", text: "Bukan boros. Kamu hanya sangat mendukung pertumbuhan ekonomi." };
+    return {
+      emoji: "🛍️",
+      title: "FINANCIAL CLOWN",
+      text: "Kamu bukan boros. Kamu cuma terlalu aktif mendukung ekonomi.",
+    };
   }
-  if (stats.balance >= 180000 && stats.social <= 45) {
-    return { emoji: "🧘", title: "FINANCIAL MONK", text: "Saldo utuh, pergaulan tinggal kenangan." };
+  if (stats.balance >= 150000 && stats.debt === 0) {
+    return {
+      emoji: "👑",
+      title: "SULTAN TANGGAL TUA",
+      text: "Masih punya saldo dan tanpa utang. Apakah kamu manusia sungguhan?",
+    };
   }
-  if (stats.mental <= 25) {
-    return { emoji: "🫠", title: "TANGGAL TUA VETERAN", text: "Dompet selamat. Mental meninggalkan grup." };
+  if (stats.mental <= 25 || stats.hunger <= 20) {
+    return {
+      emoji: "🪫",
+      title: "SURVIVOR 1% BATTERY",
+      text: "Kamu sampai gajian dengan tenaga yang secara teknis masih terdeteksi.",
+    };
   }
-  if (stats.balance >= 100000 && stats.debt === 0) {
-    return { emoji: "👑", title: "SULTAN TANGGAL TUA", text: "Kamu berhasil sampai gajian tanpa menjual ginjal." };
-  }
-  return { emoji: "🏁", title: "SURVIVOR TANGGAL TUA", text: "Tipis, dramatis, tapi kamu sampai tanggal 1." };
+  return {
+    emoji: "🏁",
+    title: "SURVIVOR TANGGAL TUA",
+    text: "Tidak elegan. Tidak nyaman. Tapi kamu berhasil sampai tanggal 1.",
+  };
 }
 
-function Meter({ icon, label, value }) {
+function Meter({ icon, label, value, dangerAt = 25 }) {
+  const danger = value <= dangerAt;
   return (
-    <div className="meter">
+    <div className={"meter " + (danger ? "meterDanger" : "")}>
       <div className="meterTop">
         <span>{icon} {label}</span>
         <strong>{value}%</strong>
       </div>
       <div className="meterTrack">
-        <span style={{ width: `${value}%` }} />
+        <span style={{ width: value + "%" }} />
       </div>
     </div>
   );
 }
 
+function StatDelta({ effects }) {
+  const bits = [];
+  if (effects.money) bits.push((effects.money > 0 ? "+" : "") + rupiah(effects.money));
+  if (effects.mental) bits.push("❤️ " + (effects.mental > 0 ? "+" : "") + effects.mental);
+  if (effects.hunger) bits.push("🍜 " + (effects.hunger > 0 ? "+" : "") + effects.hunger);
+  if (effects.social) bits.push("👥 " + (effects.social > 0 ? "+" : "") + effects.social);
+
+  if (!bits.length) return <span className="choiceDelta neutral">tanpa efek langsung</span>;
+
+  return (
+    <span className={"choiceDelta " + ((effects.money || 0) < 0 ? "negative" : "")}>
+      {bits.join(" · ")}
+    </span>
+  );
+}
+
 export default function Home() {
   const [screen, setScreen] = useState("intro");
-  const [dayIndex, setDayIndex] = useState(0);
+  const [difficultyId, setDifficultyId] = useState("realistis");
+  const [turnIndex, setTurnIndex] = useState(0);
   const [eventOrder, setEventOrder] = useState([]);
   const [picked, setPicked] = useState(null);
-  const [reaction, setReaction] = useState("");
+  const [reaction, setReaction] = useState(null);
+  const [fatal, setFatal] = useState(null);
   const [copied, setCopied] = useState(false);
-  const [stats, setStats] = useState({
-    balance: STARTING_BALANCE,
-    mental: 100,
-    hunger: 80,
-    social: 70,
-    debt: 0,
-    noodles: 0,
-    impulse: 0,
-    coffee: 0,
-  });
+  const [stats, setStats] = useState(initialStats(DIFFICULTIES.realistis));
 
-  const currentEvent = eventOrder[dayIndex];
+  const mode = DIFFICULTIES[difficultyId];
+  const dayIndex = Math.floor(turnIndex / 2);
+  const currentDay = DAYS[Math.min(dayIndex, DAYS.length - 1)];
+  const phase = turnIndex % 2 === 0 ? "PAGI" : "MALAM";
+  const currentEvent = eventOrder[turnIndex];
+
   const ending = useMemo(() => getEnding(stats), [stats]);
   const score = Math.max(
     0,
-    Math.round(stats.balance + stats.mental * 800 + stats.hunger * 350 + stats.social * 250 - stats.debt)
+    Math.round(
+      (
+        stats.balance -
+        stats.debt +
+        stats.mental * 650 +
+        stats.hunger * 420 +
+        stats.social * 260 +
+        Math.min(turnIndex + 1, TOTAL_TURNS) * 6500
+      ) * mode.scoreMultiplier
+    )
+  );
+
+  const pressure = Math.round(
+    clamp(
+      (100 - stats.mental) * 0.28 +
+      (100 - stats.hunger) * 0.24 +
+      Math.min(100, (stats.debt / mode.debtLimit) * 100) * 0.34 +
+      (100 - stats.social) * 0.14
+    )
   );
 
   function startGame() {
-    setStats({
-      balance: STARTING_BALANCE,
-      mental: 100,
-      hunger: 80,
-      social: 70,
-      debt: 0,
-      noodles: 0,
-      impulse: 0,
-      coffee: 0,
-    });
-    setEventOrder(shuffle(EVENTS).slice(0, DAYS.length));
-    setDayIndex(0);
+    const selected = DIFFICULTIES[difficultyId];
+    setStats(initialStats(selected));
+    setEventOrder(shuffle(EVENTS).slice(0, TOTAL_TURNS));
+    setTurnIndex(0);
     setPicked(null);
-    setReaction("");
+    setReaction(null);
+    setFatal(null);
     setCopied(false);
     setScreen("game");
   }
@@ -270,58 +222,110 @@ export default function Home() {
   function choose(choice, index) {
     if (picked !== null) return;
 
-    setStats((prev) => {
-      let balance = prev.balance + (choice.money || 0);
-      let extraDebt = 0;
+    let effects = mergeEffects(choice.effects, { hunger: -6, mental: -2 });
+    let riskText = "";
+    let rollText = "";
+    let chaos = null;
+    let chaosText = "";
+    let maintenanceText = "";
+    let interestText = "";
 
-      if (balance < 0) {
-        extraDebt = Math.abs(balance);
-        balance = 0;
-      }
+    if (choice.risk) {
+      const chance = riskChance(choice.risk, stats);
+      const roll = Math.floor(Math.random() * 100) + 1;
+      const success = roll <= chance;
+      effects = mergeEffects(
+        effects,
+        success ? choice.risk.success : choice.risk.failure
+      );
+      riskText = success ? choice.risk.successText : choice.risk.failureText;
+      rollText = "Dadu: " + roll + " / peluang " + chance + "% — " + (success ? "BERHASIL" : "GAGAL");
+    }
 
-      return {
-        balance,
-        mental: clamp(prev.mental + (choice.mental || 0)),
-        hunger: clamp(prev.hunger + (choice.hunger || -4)),
-        social: clamp(prev.social + (choice.social || 0)),
-        debt: prev.debt + (choice.debt || 0) + extraDebt,
-        noodles: prev.noodles + (choice.noodles || 0),
-        impulse: prev.impulse + (choice.impulse || 0),
-        coffee: prev.coffee + (choice.coffee || 0),
-      };
-    });
+    const isNight = turnIndex % 2 === 1;
 
+    if (isNight) {
+      effects = mergeEffects(effects, { money: -mode.dailyCost, hunger: -4, mental: -3 });
+      maintenanceText = "Biaya hidup minimum malam ini: -" + rupiah(mode.dailyCost);
+    }
+
+    let nextStats = resolveEffects(stats, effects);
+
+    if (isNight && nextStats.debt > 0) {
+      const interest = Math.ceil(nextStats.debt * mode.interest);
+      nextStats = { ...nextStats, debt: nextStats.debt + interest };
+      interestText = "Bunga utang " + Math.round(mode.interest * 100) + "%: +" + rupiah(interest);
+    }
+
+    if (isNight && Math.random() < 0.44) {
+      chaos = CHAOS_EVENTS[Math.floor(Math.random() * CHAOS_EVENTS.length)];
+      nextStats = resolveEffects(nextStats, chaos.effects);
+      chaosText = chaos.icon + " " + chaos.title + " — " + chaos.text;
+    }
+
+    const fatalState = getFatal(nextStats, mode);
+
+    setStats(nextStats);
     setPicked(index);
-    setReaction(choice.result);
+    setFatal(fatalState);
+    setReaction({
+      main: riskText || choice.label + " dipilih. Semoga ini tidak jadi keputusan yang kamu ingat jam 2 pagi.",
+      rollText,
+      maintenanceText,
+      interestText,
+      chaosText,
+      danger: Boolean(fatalState),
+    });
   }
 
-  function nextDay() {
-    if (dayIndex === DAYS.length - 1) {
+  function nextTurn() {
+    if (fatal) {
+      setScreen("gameover");
+      return;
+    }
+
+    if (turnIndex >= TOTAL_TURNS - 1) {
       setScreen("result");
       return;
     }
-    setDayIndex((value) => value + 1);
+
+    setTurnIndex((value) => value + 1);
     setPicked(null);
-    setReaction("");
+    setReaction(null);
   }
 
-  async function shareResult() {
-    const text = `💸 GAJI BELUM TURUN
+  async function shareResult(isGameOver = false) {
+    const label = isGameOver && fatal ? fatal.title : ending.title;
+    const progress = isGameOver
+      ? "Tumbang di tanggal " + currentDay + " " + phase.toLowerCase()
+      : "Berhasil sampai tanggal 1";
 
-Aku dapat: ${ending.title}
-💰 Saldo akhir: ${rupiah(stats.balance)}
-💳 Utang: ${rupiah(stats.debt)}
-🍜 Indomie: ${stats.noodles}x
-🏆 Skor: ${score.toLocaleString("id-ID")}
-
-Bisa lebih survive dari aku?`;
+    const text = [
+      "💸 GAJI BELUM TURUN",
+      "",
+      "Mode: " + mode.label,
+      progress,
+      "Gelar: " + label,
+      "💰 Saldo: " + rupiah(stats.balance),
+      "💳 Utang: " + rupiah(stats.debt),
+      "❤️ Mental: " + stats.mental + "%",
+      "🍜 Kenyang: " + stats.hunger + "%",
+      "🏆 Skor: " + score.toLocaleString("id-ID"),
+      "",
+      "Bisa lebih survive dari aku?",
+    ].join("\n");
 
     try {
       if (navigator.share) {
-        await navigator.share({ title: "Gaji Belum Turun", text, url: window.location.href });
+        await navigator.share({
+          title: "Gaji Belum Turun",
+          text,
+          url: window.location.href,
+        });
         return;
       }
-      await navigator.clipboard.writeText(`${text}\n${window.location.href}`);
+
+      await navigator.clipboard.writeText(text + "\n" + window.location.href);
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     } catch {
@@ -333,26 +337,83 @@ Bisa lebih survive dari aku?`;
     return (
       <main className="appShell introShell">
         <section className="hero">
-          <div className="eyebrow">GAME SURVIVAL PALING RELATE 💸</div>
+          <div className="eyebrow">SURVIVAL TANGGAL TUA — HARD MODE 💸</div>
           <div className="walletArt" aria-hidden="true">
-            <span className="walletFace">🥲</span>
+            <span className="walletFace">😵‍💫</span>
             <span className="coin coinOne">🪙</span>
             <span className="coin coinTwo">🪙</span>
           </div>
+
           <h1>GAJI<br /><span>BELUM TURUN</span></h1>
+
           <p className="heroText">
-            Bertahan dari tanggal <strong>25</strong> sampai tanggal <strong>1</strong>.
-            Jangan bangkrut. Jangan banyak gaya.
+            Sekarang bukan cuma pilih A atau B. Ada <strong>12 ronde</strong>,
+            biaya hidup harian, bunga utang, random crisis, dan keputusan berisiko.
           </p>
-          <div className="startingCard">
-            <span>Modal hidupmu</span>
-            <strong>{rupiah(STARTING_BALANCE)}</strong>
-            <small>dan keputusan finansial yang meragukan</small>
+
+          <div className="difficultyBlock">
+            <p className="difficultyTitle">PILIH TINGKAT PENDERITAAN</p>
+            <div className="difficultyGrid">
+              {Object.values(DIFFICULTIES).map((item) => (
+                <button
+                  key={item.id}
+                  className={"difficultyCard " + (difficultyId === item.id ? "selected" : "")}
+                  onClick={() => setDifficultyId(item.id)}
+                >
+                  <span className="difficultyEmoji">{item.emoji}</span>
+                  <strong>{item.label}</strong>
+                  <small>{item.description}</small>
+                  <b>{rupiah(item.startingBalance)}</b>
+                </button>
+              ))}
+            </div>
           </div>
+
+          <div className="ruleStrip">
+            <span>☀️ Pagi + 🌙 Malam</span>
+            <span>🎲 Risiko dinamis</span>
+            <span>💳 Utang berbunga</span>
+            <span>💥 Bisa game over</span>
+          </div>
+
           <button className="primaryButton" onClick={startGame}>
-            MULAI BERTAHAN HIDUP →
+            MULAI PENDERITAAN →
           </button>
-          <p className="microcopy">Tidak ada edukasi finansial serius di sini. Cuma penderitaan.</p>
+
+          <p className="microcopy">
+            Tujuan: sampai tanggal 1. Bonus: masih punya harga diri.
+          </p>
+        </section>
+      </main>
+    );
+  }
+
+  if (screen === "gameover") {
+    return (
+      <main className="appShell resultShell">
+        <section className="resultCard gameOverCard">
+          <div className="gameOverBanner">💥 GAME OVER — TANGGAL {currentDay} {phase}</div>
+          <div className="endingEmoji">{fatal?.emoji}</div>
+          <p className="resultKicker">KAMU TIDAK SAMPAI GAJIAN</p>
+          <h1>{fatal?.title}</h1>
+          <p className="endingText">{fatal?.text}</p>
+
+          <div className="resultStats">
+            <div><span>💰 Saldo</span><strong>{rupiah(stats.balance)}</strong></div>
+            <div><span>💳 Utang</span><strong>{rupiah(stats.debt)}</strong></div>
+            <div><span>❤️ Mental</span><strong>{stats.mental}%</strong></div>
+            <div><span>🍜 Kenyang</span><strong>{stats.hunger}%</strong></div>
+          </div>
+
+          <div className="scoreBox dangerScore">
+            <span>SCORE SEBELUM TUMBANG</span>
+            <strong>{score.toLocaleString("id-ID")}</strong>
+          </div>
+
+          <button className="primaryButton" onClick={() => shareResult(true)}>
+            {copied ? "HASIL DISALIN! ✓" : "SHARE KEGAGALAN ↗"}
+          </button>
+          <button className="secondaryButton" onClick={startGame}>BALAS DENDAM</button>
         </section>
       </main>
     );
@@ -362,29 +423,31 @@ Bisa lebih survive dari aku?`;
     return (
       <main className="appShell resultShell">
         <section className="resultCard">
-          <div className="paydayBanner">🎉 TANGGAL 1 — GAJI TURUN!</div>
+          <div className="paydayBanner">🎉 TANGGAL 1 — GAJI AKHIRNYA TURUN!</div>
           <div className="endingEmoji">{ending.emoji}</div>
-          <p className="resultKicker">HASIL SURVIVAL KAMU</p>
+          <p className="resultKicker">KAMU SELAMAT</p>
           <h1>{ending.title}</h1>
           <p className="endingText">{ending.text}</p>
 
           <div className="resultStats">
             <div><span>💰 Saldo akhir</span><strong>{rupiah(stats.balance)}</strong></div>
             <div><span>💳 Utang</span><strong>{rupiah(stats.debt)}</strong></div>
-            <div><span>🍜 Makan Indomie</span><strong>{stats.noodles}x</strong></div>
+            <div><span>🍜 Indomie</span><strong>{stats.noodles}x</strong></div>
             <div><span>🛍️ Khilaf</span><strong>{stats.impulse}x</strong></div>
           </div>
 
           <div className="scoreBox">
-            <span>SURVIVAL SCORE</span>
+            <span>{mode.label} SURVIVAL SCORE</span>
             <strong>{score.toLocaleString("id-ID")}</strong>
           </div>
 
-          <button className="primaryButton" onClick={shareResult}>
-            {copied ? "HASIL DISALIN! ✓" : "SHARE HASIL KE TEMAN ↗"}
+          <button className="primaryButton" onClick={() => shareResult(false)}>
+            {copied ? "HASIL DISALIN! ✓" : "PAMER HASIL ↗"}
           </button>
           <button className="secondaryButton" onClick={startGame}>MAIN LAGI</button>
-          <p className="challengeText">Kirim ke temanmu yang selalu bilang: “Masih ada uang kok.”</p>
+          <p className="challengeText">
+            Coba mode NEKAT kalau hidupmu kurang masalah.
+          </p>
         </section>
       </main>
     );
@@ -394,67 +457,126 @@ Bisa lebih survive dari aku?`;
     <main className="appShell">
       <section className="gameWrap">
         <header className="topbar">
-          <div>
-            <span className="dayLabel">TANGGAL</span>
-            <strong className="dayNumber">{DAYS[dayIndex]}</strong>
+          <div className="dateBox">
+            <span className="dayLabel">{phase}</span>
+            <strong className="dayNumber">{currentDay}</strong>
+            <small>Ronde {turnIndex + 1}/{TOTAL_TURNS}</small>
           </div>
+
           <div className="balanceBox">
-            <span>SALDO</span>
+            <span>SALDO · {mode.label}</span>
             <strong>{rupiah(stats.balance)}</strong>
-            {stats.debt > 0 && <small>Utang: {rupiah(stats.debt)}</small>}
+            <small>
+              Utang {rupiah(stats.debt)} / limit {rupiah(mode.debtLimit)}
+            </small>
           </div>
         </header>
 
+        <div className="pressureCard">
+          <div>
+            <span>TINGKAT PANIK</span>
+            <strong>{pressure}%</strong>
+          </div>
+          <div className="pressureTrack">
+            <span style={{ width: pressure + "%" }} />
+          </div>
+          <small>
+            {pressure < 35 ? "Masih sok tenang." : pressure < 70 ? "Mulai cek saldo tiap 10 menit." : "DOMPET DALAM KONDISI DARURAT."}
+          </small>
+        </div>
+
         <div className="progressDays" aria-label="Progress tanggal tua">
-          {DAYS.map((day, index) => (
-            <span key={day} className={index <= dayIndex ? "active" : ""}>{day}</span>
-          ))}
+          {DAYS.map((day, index) => {
+            const finished = index < dayIndex;
+            const active = index === dayIndex;
+            return (
+              <span key={day} className={(finished ? "done " : "") + (active ? "active" : "")}>
+                {finished ? "✓ " : ""}{day}
+              </span>
+            );
+          })}
           <span className="paydayDot">1 💸</span>
         </div>
 
         <div className="metersGrid">
           <Meter icon="❤️" label="Mental" value={stats.mental} />
           <Meter icon="🍜" label="Kenyang" value={stats.hunger} />
-          <Meter icon="👥" label="Sosial" value={stats.social} />
+          <Meter icon="👥" label="Sosial" value={stats.social} dangerAt={18} />
         </div>
 
         {currentEvent && (
-          <article className="eventCard">
+          <article className={"eventCard " + (reaction?.danger ? "eventDanger" : "")}>
+            <div className="eventMeta">
+              <span>{phase === "PAGI" ? "☀️" : "🌙"} {phase}</span>
+              <span>💥 Chaos malam: 44%</span>
+            </div>
+
             <div className="eventIcon">{currentEvent.icon}</div>
-            <p className="eventKicker">KEJADIAN HARI INI</p>
+            <p className="eventKicker">MASALAH RONDE INI</p>
             <h2>{currentEvent.title}</h2>
             <p className="eventText">{currentEvent.text}</p>
 
             <div className="choices">
-              {currentEvent.choices.map((choice, index) => (
-                <button
-                  key={choice.label}
-                  className={`choiceButton ${picked === index ? "selected" : ""} ${picked !== null && picked !== index ? "muted" : ""}`}
-                  onClick={() => choose(choice, index)}
-                  disabled={picked !== null}
-                >
-                  <span>{choice.label}</span>
-                  {choice.money !== undefined && choice.money !== 0 && (
-                    <strong className={choice.money < 0 ? "cost" : "gain"}>
-                      {choice.money < 0 ? "-" : "+"}{rupiah(Math.abs(choice.money))}
-                    </strong>
-                  )}
-                </button>
-              ))}
+              {currentEvent.choices.map((choice, index) => {
+                const chance = riskChance(choice.risk, stats);
+                return (
+                  <button
+                    key={choice.label}
+                    className={
+                      "choiceButton " +
+                      (picked === index ? "selected " : "") +
+                      (picked !== null && picked !== index ? "muted " : "") +
+                      (choice.danger ? "dangerChoice" : "")
+                    }
+                    onClick={() => choose(choice, index)}
+                    disabled={picked !== null}
+                  >
+                    <span className="choiceMain">
+                      <strong>{choice.label}</strong>
+                      <small>{choice.hint}</small>
+                      {choice.risk && (
+                        <em>🎲 Peluang aktualmu: {chance}%</em>
+                      )}
+                    </span>
+                    <StatDelta effects={choice.effects || {}} />
+                  </button>
+                );
+              })}
             </div>
 
-            {picked !== null && (
-              <div className="reactionBox">
-                <p>{reaction}</p>
-                <button className="nextButton" onClick={nextDay}>
-                  {dayIndex === DAYS.length - 1 ? "MENUJU TANGGAL 1 →" : "LANJUT BESOK →"}
+            {reaction && (
+              <div className={"reactionBox " + (reaction.danger ? "reactionDanger" : "")}>
+                <strong className="reactionHeadline">
+                  {reaction.danger ? "🚨 KEPUTUSAN FATAL" : "📌 AKIBATNYA"}
+                </strong>
+                <p>{reaction.main}</p>
+
+                <div className="reactionDetails">
+                  {reaction.rollText && <span>🎲 {reaction.rollText}</span>}
+                  {reaction.maintenanceText && <span>🧾 {reaction.maintenanceText}</span>}
+                  {reaction.interestText && <span>💳 {reaction.interestText}</span>}
+                  {reaction.chaosText && <span className="chaosLine">💥 RANDOM CRISIS: {reaction.chaosText}</span>}
+                </div>
+
+                <button className="nextButton" onClick={nextTurn}>
+                  {fatal
+                    ? "LIHAT NASIBMU →"
+                    : turnIndex === TOTAL_TURNS - 1
+                      ? "MENUJU TANGGAL 1 →"
+                      : phase === "PAGI"
+                        ? "LANJUT KE MALAM →"
+                        : "COBA BERTAHAN BESOK →"}
                 </button>
               </div>
             )}
           </article>
         )}
 
-        <p className="footerJoke">Target utama: jangan buka PayLater. Target realistis: semoga.</p>
+        <div className="dangerLegend">
+          <span>🌙 Setiap malam: biaya hidup -{rupiah(mode.dailyCost)}</span>
+          <span>💳 Bunga utang: {Math.round(mode.interest * 100)}% / malam</span>
+          <span>☠️ Game over: mental/lapar 0 atau utang {rupiah(mode.debtLimit)}</span>
+        </div>
       </section>
     </main>
   );
