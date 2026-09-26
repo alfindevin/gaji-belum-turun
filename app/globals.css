@@ -1,13 +1,15 @@
 :root {
-  --ink: #1f1b16;
-  --cream: #fff7df;
-  --paper: #fffdf4;
-  --yellow: #ffd946;
-  --orange: #ff8b38;
-  --red: #ef4c3f;
-  --green: #4f9d69;
-  --line: #2c251c;
-  --muted: #746b5d;
+  --ink: #211d18;
+  --paper: #fffdf5;
+  --cream: #f5ecd8;
+  --yellow: #ffd84a;
+  --orange: #ff9a45;
+  --red: #e94e43;
+  --green: #4c9a67;
+  --blue: #4b73b8;
+  --line: #2b251e;
+  --muted: #766d60;
+  --soft-line: #c9bda8;
 }
 
 * {
@@ -15,7 +17,7 @@
 }
 
 html {
-  background: #f2ead5;
+  background: #efe5cf;
 }
 
 body {
@@ -23,9 +25,9 @@ body {
   min-height: 100%;
   color: var(--ink);
   background:
-    radial-gradient(circle at 20% 10%, rgba(255, 217, 70, .32), transparent 28%),
-    radial-gradient(circle at 80% 90%, rgba(255, 139, 56, .2), transparent 30%),
-    #f2ead5;
+    radial-gradient(circle at 12% 8%, rgba(255, 216, 74, .32), transparent 26%),
+    radial-gradient(circle at 88% 88%, rgba(233, 78, 67, .12), transparent 26%),
+    #efe5cf;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -34,15 +36,15 @@ button {
 }
 
 button:focus-visible {
-  outline: 4px solid #2675ff;
+  outline: 4px solid #2f72d6;
   outline-offset: 3px;
 }
 
 .appShell {
-  width: min(100%, 760px);
+  width: min(100%, 800px);
   min-height: 100vh;
   margin: 0 auto;
-  padding: 24px 18px 48px;
+  padding: 24px 18px 52px;
 }
 
 .introShell,
@@ -58,8 +60,8 @@ button:focus-visible {
 }
 
 .hero {
+  padding: 25px 0 10px;
   text-align: center;
-  padding: 28px 0 10px;
 }
 
 .eyebrow,
@@ -71,7 +73,7 @@ button:focus-visible {
   border: 2px solid var(--line);
   border-radius: 999px;
   background: var(--paper);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 900;
   letter-spacing: .08em;
 }
@@ -80,31 +82,31 @@ button:focus-visible {
   position: relative;
   display: grid;
   place-items: center;
-  width: 130px;
+  width: 132px;
   height: 104px;
-  margin: 2px auto 10px;
+  margin: 2px auto 12px;
   border: 4px solid var(--line);
   border-radius: 24px;
   background: var(--orange);
-  transform: rotate(-2deg);
   box-shadow: 7px 7px 0 var(--line);
+  transform: rotate(-2deg);
 }
 
 .walletArt::after {
   content: "";
   position: absolute;
-  right: -13px;
-  top: 28px;
-  width: 47px;
+  top: 29px;
+  right: -14px;
+  width: 48px;
   height: 43px;
   border: 4px solid var(--line);
   border-radius: 12px;
-  background: #ffc269;
+  background: #ffc56c;
 }
 
 .walletFace {
-  font-size: 44px;
   z-index: 1;
+  font-size: 44px;
 }
 
 .coin {
@@ -113,23 +115,23 @@ button:focus-visible {
 }
 
 .coinOne {
-  top: -23px;
-  left: 15px;
+  top: -24px;
+  left: 14px;
   transform: rotate(-14deg);
 }
 
 .coinTwo {
   top: -28px;
   right: 9px;
-  transform: rotate(19deg);
+  transform: rotate(18deg);
 }
 
 .hero h1 {
   margin: 16px 0 10px;
-  font-size: clamp(48px, 12vw, 86px);
+  font-size: clamp(50px, 12vw, 88px);
+  font-weight: 1000;
   line-height: .84;
   letter-spacing: -.07em;
-  font-weight: 1000;
 }
 
 .hero h1 span {
@@ -139,33 +141,94 @@ button:focus-visible {
 }
 
 .heroText {
-  width: min(100%, 510px);
+  width: min(100%, 570px);
   margin: 22px auto;
-  color: #50483c;
-  font-size: 18px;
+  color: #50483d;
+  font-size: 17px;
   line-height: 1.55;
 }
 
-.startingCard {
-  display: grid;
-  gap: 3px;
-  width: min(100%, 430px);
-  margin: 0 auto 16px;
-  padding: 16px;
-  border: 3px solid var(--line);
-  border-radius: 18px;
-  background: var(--paper);
-  box-shadow: 5px 5px 0 var(--line);
+.difficultyBlock {
+  width: min(100%, 650px);
+  margin: 0 auto 18px;
 }
 
-.startingCard span,
-.startingCard small {
+.difficultyTitle {
+  margin: 0 0 9px;
   color: var(--muted);
+  font-size: 11px;
+  font-weight: 1000;
+  letter-spacing: .11em;
+}
+
+.difficultyGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+
+.difficultyCard {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+  min-height: 142px;
+  align-content: center;
+  padding: 12px 9px;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  color: var(--ink);
+  background: var(--paper);
+  box-shadow: 3px 3px 0 var(--line);
+  cursor: pointer;
+}
+
+.difficultyCard:hover {
+  transform: translate(-1px, -1px);
+}
+
+.difficultyCard.selected {
+  background: var(--yellow);
+  box-shadow: 5px 5px 0 var(--line);
+  transform: translate(-2px, -2px);
+}
+
+.difficultyEmoji {
+  font-size: 27px;
+}
+
+.difficultyCard strong {
+  font-size: 14px;
+}
+
+.difficultyCard small {
+  min-height: 30px;
+  color: #62594e;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.difficultyCard b {
+  margin-top: 3px;
   font-size: 13px;
 }
 
-.startingCard strong {
-  font-size: 28px;
+.ruleStrip {
+  display: flex;
+  width: min(100%, 650px);
+  margin: 0 auto 17px;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ruleStrip span {
+  padding: 6px 9px;
+  border: 1px solid #aa9e88;
+  border-radius: 999px;
+  background: rgba(255,255,255,.48);
+  color: #665d50;
+  font-size: 10px;
+  font-weight: 800;
 }
 
 .primaryButton,
@@ -176,11 +239,11 @@ button:focus-visible {
   border-radius: 15px;
   font-weight: 1000;
   cursor: pointer;
-  transition: transform .14s ease, box-shadow .14s ease;
+  transition: transform .13s ease, box-shadow .13s ease;
 }
 
 .primaryButton {
-  width: min(100%, 430px);
+  width: min(100%, 460px);
   padding: 17px 20px;
   background: var(--yellow);
   box-shadow: 5px 5px 0 var(--line);
@@ -207,7 +270,6 @@ button:focus-visible {
 }
 
 .microcopy,
-.footerJoke,
 .challengeText {
   color: var(--muted);
   font-size: 12px;
@@ -216,25 +278,24 @@ button:focus-visible {
 
 .topbar {
   display: flex;
-  align-items: stretch;
-  justify-content: space-between;
   gap: 12px;
-  margin-bottom: 14px;
+  align-items: stretch;
+  margin-bottom: 13px;
 }
 
 .topbar > div {
   border: 3px solid var(--line);
-  border-radius: 16px;
+  border-radius: 17px;
   background: var(--paper);
   box-shadow: 4px 4px 0 var(--line);
 }
 
-.topbar > div:first-child {
+.dateBox {
   display: grid;
+  min-width: 106px;
   place-items: center;
-  min-width: 94px;
   padding: 9px 14px;
-  background: var(--yellow);
+  background: var(--yellow) !important;
 }
 
 .dayLabel,
@@ -247,32 +308,85 @@ button:focus-visible {
 
 .dayNumber {
   font-size: 42px;
-  line-height: .9;
+  line-height: .86;
+}
+
+.dateBox small {
+  margin-top: 4px;
+  font-size: 9px;
+  font-weight: 900;
 }
 
 .balanceBox {
   display: grid;
   flex: 1;
+  min-width: 0;
   justify-items: end;
+  align-content: center;
   padding: 10px 14px;
+  text-align: right;
 }
 
 .balanceBox strong {
+  max-width: 100%;
+  overflow-wrap: anywhere;
   font-size: clamp(20px, 5vw, 29px);
 }
 
 .balanceBox small {
-  margin-top: 3px;
+  margin-top: 4px;
   color: var(--red);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
+}
+
+.pressureCard {
+  padding: 12px 14px;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  background: var(--paper);
+}
+
+.pressureCard > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.pressureCard span,
+.pressureCard strong {
+  font-size: 11px;
+  font-weight: 1000;
+}
+
+.pressureTrack {
+  height: 12px;
+  margin: 7px 0 6px;
+  overflow: hidden;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  background: #e7dcc6;
+}
+
+.pressureTrack span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--yellow), var(--orange), var(--red));
+  transition: width .25s ease;
+}
+
+.pressureCard small {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
 }
 
 .progressDays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 6px;
-  margin: 18px 0;
+  margin: 14px 0;
 }
 
 .progressDays span {
@@ -283,7 +397,7 @@ button:focus-visible {
   border-radius: 10px;
   color: #928775;
   background: rgba(255,255,255,.4);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 900;
 }
 
@@ -291,6 +405,12 @@ button:focus-visible {
   border-color: var(--line);
   color: var(--ink);
   background: var(--yellow);
+}
+
+.progressDays span.done {
+  border-color: #73977d;
+  color: #2b5c39;
+  background: #dff3e5;
 }
 
 .progressDays .paydayDot {
@@ -303,7 +423,7 @@ button:focus-visible {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 15px;
 }
 
 .meter {
@@ -311,6 +431,10 @@ button:focus-visible {
   border: 2px solid var(--line);
   border-radius: 13px;
   background: var(--paper);
+}
+
+.meterDanger {
+  background: #fff0ed;
 }
 
 .meterTop {
@@ -337,6 +461,10 @@ button:focus-visible {
   transition: width .25s ease;
 }
 
+.meterDanger .meterTrack span {
+  background: var(--red);
+}
+
 .eventCard,
 .resultCard {
   padding: 24px;
@@ -354,28 +482,52 @@ button:focus-visible {
 .eventCard::before {
   content: "";
   position: absolute;
-  top: -35px;
-  right: -25px;
-  width: 120px;
-  height: 120px;
+  top: -38px;
+  right: -28px;
+  width: 125px;
+  height: 125px;
   border: 3px solid var(--line);
   border-radius: 50%;
   background: var(--yellow);
-  opacity: .35;
+  opacity: .34;
+}
+
+.eventDanger {
+  background: #fff1ed;
+}
+
+.eventMeta {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  margin-bottom: 14px;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.eventMeta span {
+  padding: 5px 8px;
+  border: 1px solid var(--soft-line);
+  border-radius: 999px;
+  background: rgba(255,255,255,.7);
+  color: #665d50;
+  font-size: 9px;
+  font-weight: 900;
 }
 
 .eventIcon {
   position: relative;
   z-index: 1;
   margin-bottom: 8px;
-  font-size: 52px;
+  font-size: 50px;
 }
 
 .eventCard h2 {
   position: relative;
   z-index: 1;
   margin: 1px 0 10px;
-  font-size: clamp(28px, 7vw, 42px);
+  font-size: clamp(29px, 7vw, 43px);
   line-height: 1;
   letter-spacing: -.04em;
 }
@@ -396,22 +548,23 @@ button:focus-visible {
 
 .choiceButton {
   display: flex;
+  width: 100%;
+  min-height: 76px;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  width: 100%;
-  min-height: 64px;
+  gap: 14px;
   padding: 13px 14px;
   border: 2px solid var(--line);
   border-radius: 14px;
+  color: var(--ink);
   background: white;
   text-align: left;
-  font-weight: 900;
   cursor: pointer;
 }
 
 .choiceButton:hover:not(:disabled) {
-  background: #fff4bf;
+  background: #fff5c9;
+  transform: translateX(2px);
 }
 
 .choiceButton.selected {
@@ -419,24 +572,61 @@ button:focus-visible {
 }
 
 .choiceButton.muted {
-  opacity: .42;
+  opacity: .37;
+}
+
+.choiceButton.dangerChoice:not(:disabled) {
+  border-style: dashed;
 }
 
 .choiceButton:disabled {
   cursor: default;
 }
 
-.choiceButton strong {
-  white-space: nowrap;
-  font-size: 12px;
+.choiceMain {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
 }
 
-.cost {
+.choiceMain strong {
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.choiceMain small {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.choiceMain em {
+  width: fit-content;
+  margin-top: 2px;
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: #edf2fb;
+  color: #395a91;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.choiceDelta {
+  flex: 0 0 auto;
+  max-width: 44%;
+  color: #397249;
+  font-size: 10px;
+  font-weight: 900;
+  text-align: right;
+}
+
+.choiceDelta.negative {
   color: var(--red);
 }
 
-.gain {
-  color: var(--green);
+.choiceDelta.neutral {
+  color: var(--muted);
 }
 
 .reactionBox {
@@ -447,39 +637,100 @@ button:focus-visible {
   background: #fff7d8;
 }
 
-.reactionBox p {
-  margin: 0 0 12px;
+.reactionDanger {
+  border-color: var(--red);
+  background: #ffe3de;
+}
+
+.reactionHeadline {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 11px;
+  letter-spacing: .06em;
+}
+
+.reactionBox > p {
+  margin: 0 0 11px;
+  font-size: 13px;
   font-weight: 800;
   line-height: 1.45;
 }
 
+.reactionDetails {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.reactionDetails span {
+  padding: 7px 8px;
+  border-radius: 9px;
+  background: rgba(255,255,255,.65);
+  color: #5e5548;
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+.reactionDetails .chaosLine {
+  border: 1px solid #e38b79;
+  color: #8e3328;
+  background: #fff0ec;
+}
+
 .nextButton {
   padding: 13px;
-  background: var(--ink);
   color: white;
+  background: var(--ink);
   box-shadow: none;
 }
 
-.footerJoke {
-  margin: 18px auto 0;
-  text-align: center;
+.dangerLegend {
+  display: flex;
+  margin-top: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dangerLegend span {
+  padding: 6px 8px;
+  border: 1px solid #b7aa94;
+  border-radius: 999px;
+  color: #675d50;
+  background: rgba(255,255,255,.45);
+  font-size: 9px;
+  font-weight: 800;
 }
 
 .resultCard {
   text-align: center;
 }
 
-.paydayBanner {
+.paydayBanner,
+.gameOverBanner {
   margin: -8px -8px 20px;
   padding: 12px;
   border: 2px solid var(--line);
   border-radius: 13px;
-  background: #dff3e5;
   font-weight: 1000;
 }
 
+.paydayBanner {
+  background: #dff3e5;
+}
+
+.gameOverBanner {
+  color: #78291f;
+  background: #ffdcd6;
+}
+
+.gameOverCard {
+  background: #fff9f7;
+}
+
 .endingEmoji {
-  font-size: 70px;
+  font-size: 72px;
 }
 
 .resultCard h1 {
@@ -536,24 +787,66 @@ button:focus-visible {
 .scoreBox span {
   font-size: 11px;
   font-weight: 900;
-  letter-spacing: .12em;
+  letter-spacing: .1em;
 }
 
 .scoreBox strong {
   font-size: 35px;
 }
 
+.dangerScore {
+  background: #ffdcd6;
+}
+
 .challengeText {
   margin: 15px 0 0;
 }
 
-@media (max-width: 520px) {
+@media (max-width: 560px) {
   .appShell {
-    padding: 16px 12px 36px;
+    padding: 15px 11px 38px;
   }
 
   .hero {
-    padding-top: 14px;
+    padding-top: 12px;
+  }
+
+  .difficultyGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .difficultyCard {
+    grid-template-columns: 42px 1fr auto;
+    min-height: 76px;
+    align-items: center;
+    text-align: left;
+  }
+
+  .difficultyEmoji {
+    grid-row: 1 / 4;
+  }
+
+  .difficultyCard small {
+    min-height: 0;
+  }
+
+  .difficultyCard b {
+    grid-column: 3;
+    grid-row: 1 / 4;
+    margin: 0;
+  }
+
+  .topbar {
+    gap: 8px;
+  }
+
+  .dateBox {
+    min-width: 88px;
+    padding: 9px;
+  }
+
+  .balanceBox {
+    padding: 10px;
   }
 
   .metersGrid {
@@ -562,7 +855,7 @@ button:focus-visible {
 
   .meter {
     display: grid;
-    grid-template-columns: 120px 1fr;
+    grid-template-columns: 122px 1fr;
     align-items: center;
     gap: 8px;
   }
@@ -579,9 +872,15 @@ button:focus-visible {
   }
 
   .choiceButton {
+    min-height: 0;
     align-items: flex-start;
     flex-direction: column;
-    gap: 5px;
+    gap: 7px;
+  }
+
+  .choiceDelta {
+    max-width: 100%;
+    text-align: left;
   }
 
   .resultStats {
@@ -595,7 +894,21 @@ button:focus-visible {
   .progressDays span {
     min-height: 34px;
     padding: 2px;
-    font-size: 10px;
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 380px) {
+  .hero h1 {
+    font-size: 47px;
+  }
+
+  .balanceBox strong {
+    font-size: 18px;
+  }
+
+  .ruleStrip {
+    justify-content: flex-start;
   }
 }
 
