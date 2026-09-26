@@ -1,0 +1,607 @@
+:root {
+  --ink: #1f1b16;
+  --cream: #fff7df;
+  --paper: #fffdf4;
+  --yellow: #ffd946;
+  --orange: #ff8b38;
+  --red: #ef4c3f;
+  --green: #4f9d69;
+  --line: #2c251c;
+  --muted: #746b5d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: #f2ead5;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255, 217, 70, .32), transparent 28%),
+    radial-gradient(circle at 80% 90%, rgba(255, 139, 56, .2), transparent 30%),
+    #f2ead5;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button {
+  font: inherit;
+}
+
+button:focus-visible {
+  outline: 4px solid #2675ff;
+  outline-offset: 3px;
+}
+
+.appShell {
+  width: min(100%, 760px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 24px 18px 48px;
+}
+
+.introShell,
+.resultShell {
+  display: grid;
+  align-items: center;
+}
+
+.hero,
+.resultCard,
+.gameWrap {
+  width: 100%;
+}
+
+.hero {
+  text-align: center;
+  padding: 28px 0 10px;
+}
+
+.eyebrow,
+.eventKicker,
+.resultKicker {
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 7px 11px;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+.walletArt {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 130px;
+  height: 104px;
+  margin: 2px auto 10px;
+  border: 4px solid var(--line);
+  border-radius: 24px;
+  background: var(--orange);
+  transform: rotate(-2deg);
+  box-shadow: 7px 7px 0 var(--line);
+}
+
+.walletArt::after {
+  content: "";
+  position: absolute;
+  right: -13px;
+  top: 28px;
+  width: 47px;
+  height: 43px;
+  border: 4px solid var(--line);
+  border-radius: 12px;
+  background: #ffc269;
+}
+
+.walletFace {
+  font-size: 44px;
+  z-index: 1;
+}
+
+.coin {
+  position: absolute;
+  font-size: 25px;
+}
+
+.coinOne {
+  top: -23px;
+  left: 15px;
+  transform: rotate(-14deg);
+}
+
+.coinTwo {
+  top: -28px;
+  right: 9px;
+  transform: rotate(19deg);
+}
+
+.hero h1 {
+  margin: 16px 0 10px;
+  font-size: clamp(48px, 12vw, 86px);
+  line-height: .84;
+  letter-spacing: -.07em;
+  font-weight: 1000;
+}
+
+.hero h1 span {
+  color: var(--red);
+  -webkit-text-stroke: 2px var(--line);
+  text-shadow: 4px 4px 0 var(--yellow);
+}
+
+.heroText {
+  width: min(100%, 510px);
+  margin: 22px auto;
+  color: #50483c;
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+.startingCard {
+  display: grid;
+  gap: 3px;
+  width: min(100%, 430px);
+  margin: 0 auto 16px;
+  padding: 16px;
+  border: 3px solid var(--line);
+  border-radius: 18px;
+  background: var(--paper);
+  box-shadow: 5px 5px 0 var(--line);
+}
+
+.startingCard span,
+.startingCard small {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.startingCard strong {
+  font-size: 28px;
+}
+
+.primaryButton,
+.secondaryButton,
+.nextButton {
+  width: 100%;
+  border: 3px solid var(--line);
+  border-radius: 15px;
+  font-weight: 1000;
+  cursor: pointer;
+  transition: transform .14s ease, box-shadow .14s ease;
+}
+
+.primaryButton {
+  width: min(100%, 430px);
+  padding: 17px 20px;
+  background: var(--yellow);
+  box-shadow: 5px 5px 0 var(--line);
+  font-size: 16px;
+}
+
+.secondaryButton {
+  margin-top: 11px;
+  padding: 14px 18px;
+  background: var(--paper);
+}
+
+.primaryButton:hover,
+.secondaryButton:hover,
+.nextButton:hover {
+  transform: translate(-2px, -2px);
+}
+
+.primaryButton:active,
+.secondaryButton:active,
+.nextButton:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--line);
+}
+
+.microcopy,
+.footerJoke,
+.challengeText {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.topbar {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.topbar > div {
+  border: 3px solid var(--line);
+  border-radius: 16px;
+  background: var(--paper);
+  box-shadow: 4px 4px 0 var(--line);
+}
+
+.topbar > div:first-child {
+  display: grid;
+  place-items: center;
+  min-width: 94px;
+  padding: 9px 14px;
+  background: var(--yellow);
+}
+
+.dayLabel,
+.balanceBox span {
+  color: #625a4e;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.dayNumber {
+  font-size: 42px;
+  line-height: .9;
+}
+
+.balanceBox {
+  display: grid;
+  flex: 1;
+  justify-items: end;
+  padding: 10px 14px;
+}
+
+.balanceBox strong {
+  font-size: clamp(20px, 5vw, 29px);
+}
+
+.balanceBox small {
+  margin-top: 3px;
+  color: var(--red);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.progressDays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin: 18px 0;
+}
+
+.progressDays span {
+  display: grid;
+  min-height: 38px;
+  place-items: center;
+  border: 2px solid #b8ad98;
+  border-radius: 10px;
+  color: #928775;
+  background: rgba(255,255,255,.4);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.progressDays span.active {
+  border-color: var(--line);
+  color: var(--ink);
+  background: var(--yellow);
+}
+
+.progressDays .paydayDot {
+  border-color: var(--green);
+  color: #245635;
+  background: #dff3e5;
+}
+
+.metersGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.meter {
+  padding: 10px;
+  border: 2px solid var(--line);
+  border-radius: 13px;
+  background: var(--paper);
+}
+
+.meterTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 7px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.meterTrack {
+  height: 8px;
+  overflow: hidden;
+  border: 2px solid var(--line);
+  border-radius: 99px;
+  background: #e9dfca;
+}
+
+.meterTrack span {
+  display: block;
+  height: 100%;
+  background: var(--green);
+  transition: width .25s ease;
+}
+
+.eventCard,
+.resultCard {
+  padding: 24px;
+  border: 3px solid var(--line);
+  border-radius: 24px;
+  background: var(--paper);
+  box-shadow: 7px 7px 0 var(--line);
+}
+
+.eventCard {
+  position: relative;
+  overflow: hidden;
+}
+
+.eventCard::before {
+  content: "";
+  position: absolute;
+  top: -35px;
+  right: -25px;
+  width: 120px;
+  height: 120px;
+  border: 3px solid var(--line);
+  border-radius: 50%;
+  background: var(--yellow);
+  opacity: .35;
+}
+
+.eventIcon {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 8px;
+  font-size: 52px;
+}
+
+.eventCard h2 {
+  position: relative;
+  z-index: 1;
+  margin: 1px 0 10px;
+  font-size: clamp(28px, 7vw, 42px);
+  line-height: 1;
+  letter-spacing: -.04em;
+}
+
+.eventText {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 19px;
+  color: #5c5447;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.choices {
+  display: grid;
+  gap: 10px;
+}
+
+.choiceButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 64px;
+  padding: 13px 14px;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  background: white;
+  text-align: left;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.choiceButton:hover:not(:disabled) {
+  background: #fff4bf;
+}
+
+.choiceButton.selected {
+  background: var(--yellow);
+}
+
+.choiceButton.muted {
+  opacity: .42;
+}
+
+.choiceButton:disabled {
+  cursor: default;
+}
+
+.choiceButton strong {
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.cost {
+  color: var(--red);
+}
+
+.gain {
+  color: var(--green);
+}
+
+.reactionBox {
+  margin-top: 17px;
+  padding: 15px;
+  border: 2px dashed var(--line);
+  border-radius: 14px;
+  background: #fff7d8;
+}
+
+.reactionBox p {
+  margin: 0 0 12px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.nextButton {
+  padding: 13px;
+  background: var(--ink);
+  color: white;
+  box-shadow: none;
+}
+
+.footerJoke {
+  margin: 18px auto 0;
+  text-align: center;
+}
+
+.resultCard {
+  text-align: center;
+}
+
+.paydayBanner {
+  margin: -8px -8px 20px;
+  padding: 12px;
+  border: 2px solid var(--line);
+  border-radius: 13px;
+  background: #dff3e5;
+  font-weight: 1000;
+}
+
+.endingEmoji {
+  font-size: 70px;
+}
+
+.resultCard h1 {
+  margin: 2px 0 9px;
+  font-size: clamp(36px, 9vw, 62px);
+  line-height: .92;
+  letter-spacing: -.055em;
+}
+
+.endingText {
+  width: min(100%, 500px);
+  margin: 0 auto 20px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.resultStats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.resultStats div {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 2px solid var(--line);
+  border-radius: 13px;
+  background: white;
+  text-align: left;
+}
+
+.resultStats span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.resultStats strong {
+  font-size: 18px;
+}
+
+.scoreBox {
+  display: grid;
+  gap: 2px;
+  margin: 16px 0;
+  padding: 15px;
+  border: 3px solid var(--line);
+  border-radius: 15px;
+  background: var(--yellow);
+}
+
+.scoreBox span {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.scoreBox strong {
+  font-size: 35px;
+}
+
+.challengeText {
+  margin: 15px 0 0;
+}
+
+@media (max-width: 520px) {
+  .appShell {
+    padding: 16px 12px 36px;
+  }
+
+  .hero {
+    padding-top: 14px;
+  }
+
+  .metersGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .meter {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .meterTop {
+    margin: 0;
+  }
+
+  .eventCard,
+  .resultCard {
+    padding: 18px;
+    border-radius: 20px;
+    box-shadow: 5px 5px 0 var(--line);
+  }
+
+  .choiceButton {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .resultStats {
+    grid-template-columns: 1fr;
+  }
+
+  .progressDays {
+    gap: 4px;
+  }
+
+  .progressDays span {
+    min-height: 34px;
+    padding: 2px;
+    font-size: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
